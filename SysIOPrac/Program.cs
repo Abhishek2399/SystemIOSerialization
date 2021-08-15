@@ -6,8 +6,8 @@ using System.Threading.Tasks;
 using System.IO;
 using System.Runtime.Serialization.Formatters.Binary;
 using System.Runtime.Serialization.Formatters.Soap;
-
-
+using System.Xml.Serialization;
+using Newtonsoft.Json;
 
 namespace SysIOPrac
 {
@@ -18,6 +18,10 @@ namespace SysIOPrac
             string binPath = @"D:\capgemini\training\technical\SysIOPrac\SysIOPrac\Movie.bin";
             
             string soapPath = @"D:\capgemini\training\technical\SysIOPrac\SysIOPrac\Movie.soap";
+            
+            string xmlPath = @"D:\capgemini\training\technical\SysIOPrac\SysIOPrac\Movie.xml";
+            
+            string jsonPath = @"D:\capgemini\training\technical\SysIOPrac\SysIOPrac\Movie.json";
 
             MovieSerializable mv = new MovieSerializable() { Director = "Wes Anderson", Name = "Bottle Rocket", Rating = 5};
 
@@ -59,14 +63,39 @@ namespace SysIOPrac
             #endregion
 
             #region XML Serialization
+            using (FileStream fs = new FileStream(xmlPath, FileMode.Create, FileAccess.Write))
+            {
+                XmlSerializer xs = new XmlSerializer(typeof(MovieSerializable));
+                xs.Serialize(fs, mv);
+                Console.WriteLine("Done Serialization");
+            }
 
-
+            using (FileStream fs = new FileStream(xmlPath, FileMode.Open, FileAccess.Read))
+            {
+                XmlSerializer xs = new XmlSerializer(typeof(MovieSerializable));
+                mv = (MovieSerializable)xs.Deserialize(fs);
+                Console.WriteLine("Done Serialization");
+            }
             #endregion
 
             #region JSON Serialization 
+            using (StreamWriter sw = new StreamWriter(jsonPath))
+            {
+                using (JsonWriter jWriter = new JsonTextWriter(sw))
+                {
+                    JsonSerializer js = new JsonSerializer();
+                    js.Serialize(jWriter, mv);
+                }
+            }
 
-
-
+            using (StreamReader sr = new StreamReader(jsonPath))
+            {
+                using (JsonReader jReader = new JsonTextReader(sr))
+                {
+                    JsonSerializer js = new JsonSerializer();
+                    mv = (MovieSerializable)js.Deserialize(jReader);
+                }
+            }
             #endregion
 
         }
