@@ -92,8 +92,15 @@ namespace SysIOPrac
             {
                 using (JsonReader jReader = new JsonTextReader(sr))
                 {
-                    JsonSerializer js = new JsonSerializer();
-                    mv = (MovieSerializable)js.Deserialize(jReader);
+                    try
+                    {
+                        JsonSerializer js = new JsonSerializer();
+                        mv = js.Deserialize< MovieSerializable>(jReader);
+                    }
+                    catch(Exception ex)
+                    {
+                        Console.WriteLine(ex.Message);
+                    }
                 }
             }
             #endregion
